@@ -1,26 +1,143 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* FONTS */
+  --font-ancient: "Cinzel", serif;
+  --font-modern: "JetBrains Mono", monospace;
+  --font-sans: system-ui, -apple-system, sans-serif;
+  
+  /* COLORS - Digital Stone */
+  --color-obsidian: #050505;
+  --color-basalt: #111111;
+  --color-alabaster: #e5e5e5;
+  --color-granite: #737373;
+  --color-lucid: #00f0ff;
+  --color-lapis: #3b82f6;
+  
+  /* SPACING */
+  --max-width-container: 1280px;
+  --max-width-prose: 600px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* BASE STYLES */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-obsidian);
+  color: var(--color-alabaster);
+  font-family: var(--font-modern);
+  line-height: 1.7;
+  
+  /* Subtle noise texture (no image needed) */
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.01) 2px,
+      rgba(255, 255, 255, 0.01) 4px
+    );
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ancient);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+}
+
+/* UTILITY CLASSES */
+.text-ancient {
+  font-family: var(--font-ancient);
+}
+
+.text-modern {
+  font-family: var(--font-modern);
+}
+
+.text-obsidian { color: var(--color-obsidian); }
+.text-basalt { color: var(--color-basalt); }
+.text-alabaster { color: var(--color-alabaster); }
+.text-granite { color: var(--color-granite); }
+.text-lucid { color: var(--color-lucid); }
+.text-lapis { color: var(--color-lapis); }
+
+.bg-obsidian { background-color: var(--color-obsidian); }
+.bg-basalt { background-color: var(--color-basalt); }
+.bg-alabaster { background-color: var(--color-alabaster); }
+
+.border-lucid { border-color: var(--color-lucid); }
+.border-granite { border-color: var(--color-granite); }
+
+/* SHARP EDGES (No rounded corners) */
+.sharp {
+  border-radius: 0;
+}
+
+/* STONE CARD */
+.stone-card {
+  background-color: var(--color-basalt);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stone-card:hover {
+  border-color: var(--color-lucid);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+}
+
+/* THE PLUMB LINE */
+.plumb-line {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-lucid),
+    transparent
+  );
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* MONOLITH BUTTON */
+.monolith-btn {
+  font-family: var(--font-modern);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1rem 2rem;
+  border: 1px solid var(--color-lucid);
+  background: transparent;
+  color: var(--color-lucid);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.monolith-btn:hover {
+  background: var(--color-lucid);
+  color: var(--color-obsidian);
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.4);
+}
+
+/* TYPEWRITER EFFECT */
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--color-lucid);
+  animation: typewriter 3s steps(40) 1s forwards, blink 0.75s step-end infinite;
+}
+
+@keyframes blink {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--color-lucid); }
 }
