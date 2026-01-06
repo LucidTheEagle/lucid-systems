@@ -1,15 +1,20 @@
-import { TracingBeam } from '@/components/ui/tracing-beam'
-import Navigation from '@/components/Navigation'
-import Hero from '@/components/Hero'
+import { TracingBeam } from "@/components/ui/tracing-beam";
+import Hero from "@/components/Hero";
+import Navigation from "@/components/Navigation";
+import { Creed } from "@/components/Creed";
 
 export default function Home() {
   return (
-    <>
+    <main className="bg-obsidian min-h-screen antialiased selection:bg-lucid selection:text-obsidian">
       <Navigation />
+    
       <TracingBeam>
-        <Hero />
-        {/* More sections will go here */}
+        <Hero /> {/* Hero should be full-width */}
+        <Creed /> {/* Creed should be full-width */}
+        
+        {/* Placeholder */}
+        <div id="problem" className="h-screen"></div>
       </TracingBeam>
-    </>
-  )
+    </main>
+  );
 }

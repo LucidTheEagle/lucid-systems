@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Spotlight } from "./ui/spotlight";
 import { TextGenerateEffect } from "./ui/text-generate-effect";
 import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
-import { ChevronDown, ArrowRight } from "lucide-react"; // Import Arrow
+import { ChevronDown, ArrowRight } from "lucide-react";
 
 export default function Hero() {
   const scrollToNext = () => {
@@ -19,27 +19,34 @@ export default function Hero() {
       id="hero"
       className="relative min-h-screen w-full flex items-center justify-center overflow-hidden"
     >
-      {/* Spotlight Effect */}
-      <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="white" />
+      {/* DUAL SPOTLIGHT BEAMS - Oracle's Fix */}
+      <Spotlight 
+        className="-top-40 left-0 md:left-60 md:-top-20" 
+        fill="white" 
+      />
+      <Spotlight 
+        className="-top-40 right-0 md:right-60 md:-top-20" 
+        fill="rgba(0, 240, 255, 0.5)" 
+      />
       
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
         
-        {/* Main Headline */}
+        {/* Main Headline - IMPROVED MOBILE SIZING */}
         <div className="mb-8 md:mb-12">
           <TextGenerateEffect
             words="YOU ARE BUILDING IN THE FOG."
-            className="text-ancient text-4xl md:text-7xl lg:text-8xl font-bold uppercase tracking-widest text-alabaster"
+            className="text-ancient text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-bold uppercase tracking-widest text-alabaster"
             filter={true}
             duration={0.8}
           />
         </div>
 
-        {/* Subheadline - Typewriter */}
+        {/* Subheadline - Typewriter - TIMING FIXED (2.5s delay) */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.5 }}
+          transition={{ delay: 2.5, duration: 0.5 }}
           className="mb-12 md:mb-16 flex justify-center"
         >
           <TypewriterEffectSmooth
@@ -52,7 +59,7 @@ export default function Hero() {
           />
         </motion.div>
 
-        {/* THE ASCENT CTA - CUSTOM BUILD */}
+        {/* THE ASCENT CTA - IMPROVED TIMING */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -61,7 +68,7 @@ export default function Hero() {
         >
           <button
             onClick={() => window.open("https://cal.com/lucid-theeagle-ebabkz/system-strategy-call", "_blank")}
-            className="group relative inline-flex h-16 items-center justify-center overflow-hidden bg-basalt px-10 font-medium text-neutral-200 transition-all duration-300 hover:w-80 hover:bg-white/5 border border-white/10 hover:border-lucid/50"
+            className="group relative inline-flex h-16 items-center justify-center overflow-hidden bg-basalt px-10 font-medium text-neutral-200 transition-all duration-500 hover:w-80 hover:bg-white/5 border border-white/10 hover:border-lucid/50"
           >
             {/* Background Glow on Hover */}
             <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
