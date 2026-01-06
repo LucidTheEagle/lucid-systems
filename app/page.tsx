@@ -2,6 +2,7 @@ import { TracingBeam } from "@/components/ui/tracing-beam";
 import Hero from "@/components/Hero";
 import Navigation from "@/components/Navigation";
 import { Creed } from "@/components/Creed";
+import Systems from "@/components/Systems";
 
 export default function Home() {
   return (
@@ -11,7 +12,7 @@ export default function Home() {
       <TracingBeam>
         <Hero /> {/* Hero should be full-width */}
         <Creed /> {/* Creed should be full-width */}
-        
+        <Systems /> {/* Systems should be full-width */}
         {/* Placeholder */}
         <div id="problem" className="h-screen"></div>
       </TracingBeam>

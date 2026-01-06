@@ -145,3 +145,15 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 }
+@keyframes scan-line {
+  0% {
+    left: -100%;
+  }
+  50%, 100% {
+    left: 100%;
+  }
+}
+
+.animate-scan-line {
+  animation: scan-line 3s linear infinite;
+}
