@@ -2,7 +2,13 @@ import { TracingBeam } from "@/components/ui/tracing-beam";
 import Hero from "@/components/Hero";
 import Navigation from "@/components/Navigation";
 import { Creed } from "@/components/Creed";
+import Problem from "@/components/Problem";
 import Systems from "@/components/Systems";
+import Pricing from "@/components/Pricing";
+import HowItWorks from "@/components/HowItWorks";
+import Proof from "@/components/proof";
+import FinalCTA from "@/components/FinalCTA";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -12,9 +18,13 @@ export default function Home() {
       <TracingBeam>
         <Hero /> {/* Hero should be full-width */}
         <Creed /> {/* Creed should be full-width */}
+        <Problem />
         <Systems /> {/* Systems should be full-width */}
-        {/* Placeholder */}
-        <div id="problem" className="h-screen"></div>
+        <Pricing />
+        <HowItWorks />
+        <Proof />
+        <FinalCTA />
+        <Footer />
       </TracingBeam>
     </main>
   );
