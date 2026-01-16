@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef } from "react";
-import { motion, useScroll, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { Search, Layers, Zap, TrendingUp } from "lucide-react";
 
 const steps = [
@@ -40,33 +40,42 @@ const steps = [
 
 export default function HowItWorks() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start center", "end center"],
-  });
+  const premiumEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
   return (
     <section 
       id="how-it-works" 
       ref={containerRef}
       className="relative w-full bg-obsidian py-32 md:py-48 overflow-hidden"
+      style={{ position: 'relative' }}
     >
-      {/* DATA FOG (Oracle's depth) */}
+      {/* DATA FOG */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(50,50,50,0.1)_0%,rgba(0,0,0,0)_70%)]" />
       
-      {/* PRECISION GRID (Oracle's blueprint) */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] opacity-20" />
+      {/* PRECISION GRID */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-size-[40px_40px] opacity-20" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         
         {/* HEADER */}
         <div className="mb-24 md:mb-32 pl-6 md:pl-8 border-l-2 border-lucid/20 relative">
-          <div className="absolute -left-[5px] top-0 w-2 h-2 bg-lucid rounded-full shadow-[0_0_10px_cyan]" />
+          {/* GLOWING DOT */}
+          <motion.div 
+            className="absolute -left-[5px] top-0 w-2 h-2 bg-lucid rounded-full"
+            animate={{
+              boxShadow: [
+                "0 0 10px rgba(0,240,255,0.5)",
+                "0 0 20px rgba(0,240,255,0.8)",
+                "0 0 10px rgba(0,240,255,0.5)"
+              ]
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
            
           <motion.h2 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: premiumEase }}
             viewport={{ once: true }}
             className="text-ancient text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-[0.15em] text-alabaster mb-4"
           >
@@ -75,7 +84,7 @@ export default function HowItWorks() {
           <motion.p 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }}
             viewport={{ once: true }}
             className="text-modern text-granite text-sm md:text-base tracking-[0.2em]"
           >
@@ -86,7 +95,13 @@ export default function HowItWorks() {
         {/* CIRCUIT CONTAINER */}
         <div className="space-y-20 md:space-y-28">
           {steps.map((step, idx) => (
-            <CircuitNode key={step.id} step={step} index={idx} totalSteps={steps.length} />
+            <CircuitNode 
+              key={step.id} 
+              step={step} 
+              index={idx} 
+              totalSteps={steps.length}
+              premiumEase={premiumEase}
+            />
           ))}
         </div>
 
@@ -95,8 +110,18 @@ export default function HowItWorks() {
   );
 }
 
-// CIRCUIT NODE - FIXED WITH FLEX LAYOUT (No Overlap)
-function CircuitNode({ step, index, totalSteps }: { step: typeof steps[0]; index: number; totalSteps: number }) {
+// CIRCUIT NODE - LIQUID SMOOTH TRANSITIONS
+function CircuitNode({ 
+  step, 
+  index, 
+  totalSteps,
+  premiumEase 
+}: { 
+  step: typeof steps[0]; 
+  index: number; 
+  totalSteps: number;
+  premiumEase: [number, number, number, number];
+}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   const isLast = index === totalSteps - 1;
@@ -110,47 +135,100 @@ function CircuitNode({ step, index, totalSteps }: { step: typeof steps[0]; index
         {/* LEFT: ICON + VERTICAL LINE */}
         <div className="relative flex flex-col items-center shrink-0">
           
-          {/* ICON NODE */}
+          {/* ICON NODE - BREATHING GLOW */}
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={isInView ? { scale: 1, opacity: 1 } : {}}
-            transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
-            className="relative z-20"
+            transition={{ duration: 0.6, delay: 0.2, ease: premiumEase }}
           >
-            <div className={`
-              w-14 h-14 md:w-16 md:h-16 flex items-center justify-center 
-              bg-basalt border-2 transition-all duration-700
-              ${isInView 
-                ? "border-lucid shadow-[0_0_30px_rgba(0,240,255,0.2)]" 
-                : "border-white/10"
-              }
-            `}>
+            <motion.div 
+              className={`
+                w-14 h-14 md:w-16 md:h-16 flex items-center justify-center 
+                bg-basalt border-2 transition-all duration-700
+                ${isInView 
+                  ? "border-lucid" 
+                  : "border-white/10"
+                }
+              `}
+              animate={isInView ? {
+                boxShadow: [
+                  "0 0 15px rgba(0,240,255,0.1)",
+                  "0 0 30px rgba(0,240,255,0.3)",
+                  "0 0 15px rgba(0,240,255,0.1)"
+                ]
+              } : {}}
+              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+            >
               {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-1 h-1 bg-lucid opacity-30" />
-              <div className="absolute bottom-0 right-0 w-1 h-1 bg-lucid opacity-30" />
+              <motion.div 
+                className="absolute top-0 left-0 w-1 h-1 bg-lucid"
+                animate={isInView ? { opacity: [0.3, 0.7, 0.3] } : { opacity: 0.3 }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <motion.div 
+                className="absolute bottom-0 right-0 w-1 h-1 bg-lucid"
+                animate={isInView ? { opacity: [0.3, 0.7, 0.3] } : { opacity: 0.3 }}
+                transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+              />
 
-              <div className={`transition-colors duration-500 ${
-                isInView ? "text-lucid" : "text-granite"
-              }`}>
+              <motion.div 
+                className={`transition-colors duration-700 ${
+                  isInView ? "text-lucid" : "text-granite"
+                }`}
+                animate={isInView ? {
+                  filter: [
+                    "drop-shadow(0 0 2px rgba(0,240,255,0.3))",
+                    "drop-shadow(0 0 6px rgba(0,240,255,0.6))",
+                    "drop-shadow(0 0 2px rgba(0,240,255,0.3))"
+                  ]
+                } : {}}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+              >
                 {step.icon}
-              </div>
+              </motion.div>
               
               {/* Number Badge */}
               <div className="absolute -top-2 -right-2 bg-obsidian px-1.5 py-0.5 border border-white/10 text-[9px] font-mono text-granite tracking-wider">
                 {step.id}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
 
-          {/* VERTICAL LINE (Connecting to next stage) */}
+          {/* VERTICAL LINE (Connecting to next stage) - LIQUID FLOW */}
           {!isLast && (
             <div className="w-px h-20 md:h-28 bg-white/5 mt-4 relative overflow-hidden">
               <motion.div
                 initial={{ scaleY: 0 }}
                 animate={isInView ? { scaleY: 1 } : {}}
-                transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-                className="w-full h-full bg-lucid origin-top shadow-[0_0_8px_rgba(0,240,255,0.4)]"
+                transition={{ 
+                  duration: 1.2, 
+                  delay: 0.6, 
+                  ease: premiumEase 
+                }}
+                className="w-full h-full bg-lucid origin-top"
+                style={{
+                  boxShadow: "0 0 8px rgba(0,240,255,0.4)"
+                }}
               />
+              
+              {/* ENERGY PULSE TRAVELING DOWN */}
+              {isInView && (
+                <motion.div
+                  initial={{ y: "-100%", opacity: 0 }}
+                  animate={{ 
+                    y: "300%", 
+                    opacity: [0, 1, 0] 
+                  }}
+                  transition={{ 
+                    duration: 2,
+                    delay: 1.8,
+                    repeat: Infinity,
+                    repeatDelay: 3,
+                    ease: "easeInOut"
+                  }}
+                  className="absolute inset-0 w-full h-4 bg-linear-to-b from-transparent via-lucid to-transparent"
+                />
+              )}
             </div>
           )}
         </div>
@@ -159,35 +237,59 @@ function CircuitNode({ step, index, totalSteps }: { step: typeof steps[0]; index
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.7, delay: 0.4, ease: premiumEase }}
           className="flex-1 pt-1"
         >
-          {/* STATUS INDICATOR (Oracle's boot-up feel) */}
+          {/* STATUS INDICATOR - BOOT-UP FEEL */}
           <div className="flex items-center gap-2 mb-3">
-            <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
-              isInView ? "bg-emerald-400 animate-pulse" : "bg-granite"
-            }`} />
-            <span className={`text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors duration-500 ${
-              isInView ? "text-emerald-400/80" : "text-granite"
-            }`}>
+            <motion.div 
+              className={`w-1.5 h-1.5 rounded-full transition-colors duration-700 ${
+                isInView ? "bg-emerald-400" : "bg-granite"
+              }`}
+              animate={isInView ? { 
+                opacity: [0.3, 1, 0.3],
+                scale: [1, 1.2, 1]
+              } : {}}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.span 
+              className={`text-[10px] md:text-xs font-mono tracking-widest uppercase transition-colors duration-700 ${
+                isInView ? "text-emerald-400/80" : "text-granite"
+              }`}
+            >
               {step.status} {isInView ? "INITIALIZED" : "PENDING"}
-            </span>
+            </motion.span>
           </div>
 
           {/* TITLE + SUBTITLE */}
           <div className="flex flex-col md:flex-row md:items-end gap-1 md:gap-4 mb-4 md:mb-6">
-            <h3 className="text-ancient text-2xl md:text-4xl lg:text-5xl font-bold text-alabaster tracking-wide uppercase leading-tight">
+            <motion.h3 
+              initial={{ opacity: 0 }}
+              animate={isInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="text-ancient text-2xl md:text-4xl lg:text-5xl font-bold text-alabaster tracking-wide uppercase leading-tight"
+            >
               {step.title}
-            </h3>
-            <span className="text-lucid text-modern text-xs md:text-sm tracking-[0.2em] uppercase md:mb-1 opacity-70">
-               {step.subtitle}
-            </span>
+            </motion.h3>
+            <motion.span 
+              initial={{ opacity: 0, x: -10 }}
+              animate={isInView ? { opacity: 0.7, x: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.8, ease: premiumEase }}
+              className="text-lucid text-modern text-xs md:text-sm tracking-[0.2em] uppercase md:mb-1"
+            >
+              {step.subtitle}
+            </motion.span>
           </div>
 
           {/* DESCRIPTION */}
-          <p className="text-modern text-granite text-sm md:text-base leading-relaxed max-w-2xl border-l-2 border-white/5 pl-4 hover:border-lucid/50 transition-colors duration-300">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.7, delay: 1.0, ease: premiumEase }}
+            className="text-modern text-granite text-sm md:text-base leading-relaxed max-w-2xl border-l-2 border-white/5 pl-4 hover:border-lucid/50 transition-colors duration-500"
+          >
             {step.description}
-          </p>
+          </motion.p>
         </motion.div>
 
       </div>

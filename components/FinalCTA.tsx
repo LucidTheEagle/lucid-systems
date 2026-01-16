@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Terminal } from "lucide-react";
 
 export default function FinalCTA() {
+  const premiumEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
+
   return (
     <section className="relative w-full py-32 md:py-48 bg-obsidian overflow-hidden flex flex-col items-center justify-center border-t border-white/5">
       
@@ -11,16 +13,43 @@ export default function FinalCTA() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,240,255,0.05)_0%,rgba(0,0,0,0)_50%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.8)_100%)]" />
 
+      {/* SCANLINES */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{
+          backgroundImage: `repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255,255,255,0.05) 2px,
+            rgba(255,255,255,0.05) 4px
+          )`
+        }}
+      />
+
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         
-        {/* ICON */}
+        {/* ICON - BREATHING GLOW */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="mx-auto mb-8 w-16 h-16 bg-basalt border border-white/10 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.1)]"
+          transition={{ duration: 0.6, ease: premiumEase }}
+          className="mx-auto mb-8"
         >
-          <Terminal className="w-8 h-8 text-lucid" />
+          <motion.div
+            className="w-16 h-16 bg-basalt border border-lucid flex items-center justify-center"
+            animate={{
+              boxShadow: [
+                "0 0 15px rgba(0,240,255,0.2)",
+                "0 0 30px rgba(0,240,255,0.4)",
+                "0 0 15px rgba(0,240,255,0.2)"
+              ]
+            }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Terminal className="w-8 h-8 text-lucid" />
+          </motion.div>
         </motion.div>
 
         {/* HEADLINE */}
@@ -28,10 +57,10 @@ export default function FinalCTA() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="text-4xl md:text-6xl font-bold text-alabaster tracking-tight mb-6"
+          transition={{ delay: 0.2, duration: 0.8, ease: premiumEase }}
+          className="text-ancient text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-[0.15em] text-alabaster mb-6"
         >
-          READY TO <span className="text-lucid">ENFORCE ORDER</span>?
+          Ready to <span className="text-lucid">Enforce Order</span>?
         </motion.h2>
 
         {/* SUBHEADLINE */}
@@ -39,11 +68,11 @@ export default function FinalCTA() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="text-granite text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed"
+          transition={{ delay: 0.3, duration: 0.8, ease: premiumEase }}
+          className="text-modern text-granite text-base md:text-lg max-w-2xl mx-auto mb-12 leading-relaxed"
         >
-          The fog is optional. Clarity is a choice. 
-          Stop managing chaos and start architecting your ascent.
+          I don&apos;t build features. I build systems that remove chaos from high-volume operations. 
+          <span className="text-alabaster block mt-2">If your team is drowning in manual work, we need to talk.</span>
         </motion.p>
 
         {/* BUTTONS */}
@@ -51,19 +80,21 @@ export default function FinalCTA() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.4, duration: 0.8, ease: premiumEase }}
           className="flex flex-col md:flex-row items-center justify-center gap-6"
         >
           {/* PRIMARY CTA */}
           <a 
-            href="https://cal.com/your-link" // REPLACE WITH REAL LINK
+            href="https://cal.com/lucid-theeagle-ebabkz/system-strategy-call"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative px-8 py-4 bg-lucid text-obsidian font-bold text-lg tracking-wide hover:bg-white transition-all duration-300 flex items-center gap-3"
+            className="group relative px-8 py-4 bg-lucid text-obsidian font-bold text-lg tracking-wide hover:bg-white transition-all duration-300 flex items-center gap-3 border border-lucid hover:border-white"
           >
-            <span>INITIATE DEPLOYMENT</span>
+            <span className="uppercase tracking-widest">Initiate Deployment</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            <div className="absolute inset-0 border border-white/20 scale-105 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+            
+            {/* EXPANDING BORDER EFFECT */}
+            <div className="absolute inset-0 border border-white/20 scale-105 opacity-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500 pointer-events-none" />
           </a>
 
           {/* SECONDARY CTA */}
@@ -73,6 +104,19 @@ export default function FinalCTA() {
           >
             Review System Architecture
           </a>
+        </motion.div>
+
+        {/* TERMINAL PROMPT */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="mt-16 text-center"
+        >
+          <p className="text-lucid/60 font-mono text-xs uppercase tracking-[0.3em]">
+            &gt; DEPLOYMENT_PROTOCOL_ACTIVE
+          </p>
         </motion.div>
 
       </div>

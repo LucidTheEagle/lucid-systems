@@ -153,6 +153,15 @@ h1, h2, h3, h4, h5, h6 {
     left: 100%;
   }
 }
+@keyframes scanlines {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
 
 .animate-scan-line {
   animation: scan-line 3s linear infinite;

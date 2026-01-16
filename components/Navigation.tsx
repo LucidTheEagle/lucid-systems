@@ -21,7 +21,7 @@ export default function Navigation() {
     const element = document.getElementById(id)
     if (element) {
       element.scrollIntoView({ behavior: "smooth" })
-      setMobileMenuOpen(false) // Close menu after navigation
+      setMobileMenuOpen(false)
     }
   }
 
@@ -30,7 +30,7 @@ export default function Navigation() {
       <motion.nav
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled ? "bg-obsidian/80" : "bg-transparent"
         }`}
@@ -40,14 +40,18 @@ export default function Navigation() {
         }}
       >
         <div className="max-w-[1280px] mx-auto px-6 py-6 flex items-center justify-between">
-          {/* Logo/Brand - INCREASED SIZE */}
+          {/* Logo/Brand - GRADIENT SPLIT + RADIANCE HOVER */}
           <motion.button
             onClick={() => scrollToSection("hero")}
-            className="text-ancient text-alabaster text-2xl md:text-3xl tracking-[0.15em] uppercase font-bold hover:text-lucid transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(0,240,255,0.3)]"
-            whileHover={{ scale: 1.02 }}
+            className="text-ancient text-2xl md:text-3xl tracking-[0.15em] uppercase font-bold transition-all duration-300 group"
             whileTap={{ scale: 0.98 }}
           >
-            LUCID SYSTEMS
+            <span className="text-alabaster group-hover:drop-shadow-[0_0_12px_rgba(229,229,229,0.6)]">
+              LUCID
+            </span>
+            <span className="bg-gradient-to-r from-emerald-400 to-lucid bg-clip-text text-transparent group-hover:drop-shadow-[0_0_16px_rgba(0,240,255,0.8)]">
+              SYSTEMS
+            </span>
           </motion.button>
 
           {/* Desktop Navigation */}
@@ -78,7 +82,7 @@ export default function Navigation() {
         </div>
       </motion.nav>
 
-      {/* GLASS SHEET MOBILE MENU - Oracle's Fix */}
+      {/* GLASS SHEET MOBILE MENU */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -89,10 +93,8 @@ export default function Navigation() {
             className="fixed inset-0 z-40 md:hidden"
             style={{ backdropFilter: "blur(20px)" }}
           >
-            {/* Glass Sheet Background */}
             <div className="absolute inset-0 bg-obsidian/90" />
             
-            {/* Menu Content */}
             <div className="relative h-full flex flex-col items-center justify-center gap-12 px-6">
               <motion.button
                 onClick={() => scrollToSection("systems")}
@@ -127,7 +129,6 @@ export default function Navigation() {
                 ASCEND
               </motion.button>
 
-              {/* Close hint */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -138,7 +139,6 @@ export default function Navigation() {
               </motion.p>
             </div>
 
-            {/* Tap anywhere to close */}
             <div 
               className="absolute inset-0 z-0"
               onClick={() => setMobileMenuOpen(false)}

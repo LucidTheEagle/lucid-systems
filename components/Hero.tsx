@@ -4,22 +4,18 @@ import { motion } from "framer-motion";
 import { Spotlight } from "./ui/spotlight";
 import { TextGenerateEffect } from "./ui/text-generate-effect";
 import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
-import { ChevronDown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function Hero() {
-  const scrollToNext = () => {
-    const creedSection = document.getElementById("creed");
-    if (creedSection) {
-      creedSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  // Premium cubic-bezier easing
+  const premiumEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
   return (
     <section
       id="hero"
       className="relative min-h-screen w-full flex items-center justify-center overflow-hidden"
     >
-      {/* DUAL SPOTLIGHT BEAMS - Oracle's Fix */}
+      {/* DUAL SPOTLIGHT BEAMS */}
       <Spotlight 
         className="-top-40 left-0 md:left-60 md:-top-20" 
         fill="white" 
@@ -32,7 +28,7 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 text-center">
         
-        {/* Main Headline - IMPROVED MOBILE SIZING */}
+        {/* Main Headline - PREMIUM PHYSICS */}
         <div className="mb-8 md:mb-12">
           <TextGenerateEffect
             words="YOU ARE BUILDING IN THE FOG."
@@ -42,11 +38,11 @@ export default function Hero() {
           />
         </div>
 
-        {/* Subheadline - Typewriter - TIMING FIXED (2.5s delay) */}
+        {/* Subheadline - Typewriter */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 0.5 }}
+          transition={{ delay: 2.5, duration: 0.5, ease: premiumEase }}
           className="mb-12 md:mb-16 flex justify-center"
         >
           <TypewriterEffectSmooth
@@ -59,11 +55,11 @@ export default function Hero() {
           />
         </motion.div>
 
-        {/* THE ASCENT CTA - IMPROVED TIMING */}
+        {/* THE ASCENT CTA - PREMIUM WEIGHTY ENTRANCE */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3.5, duration: 0.5 }}
+          transition={{ delay: 3.5, duration: 0.8, ease: premiumEase }}
           className="flex flex-col items-center gap-4"
         >
           <button
@@ -71,7 +67,7 @@ export default function Hero() {
             className="group relative inline-flex h-16 items-center justify-center overflow-hidden bg-basalt px-10 font-medium text-neutral-200 transition-all duration-500 hover:w-80 hover:bg-white/5 border border-white/10 hover:border-lucid/50"
           >
             {/* Background Glow on Hover */}
-            <div className="absolute inset-0 flex h-full w-full justify-center [transform:skew(-12deg)_translateX(-100%)] group-hover:duration-1000 group-hover:[transform:skew(-12deg)_translateX(100%)]">
+            <div className="absolute inset-0 flex h-full w-full justify-center transform-[skew(-12deg)_translateX(-100%)]">
               <div className="relative h-full w-8 bg-white/20" />
             </div>
 
@@ -87,19 +83,6 @@ export default function Hero() {
           </button>
         </motion.div>
       </div>
-
-      {/* Scroll Indicator */}
-      <motion.button
-        onClick={scrollToNext}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 4.5, duration: 0.5 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 text-granite hover:text-lucid transition-colors cursor-pointer flex flex-col items-center gap-2"
-        whileHover={{ y: 5 }}
-      >
-        <span className="text-[10px] uppercase tracking-widest opacity-50">Scroll to Reveal</span>
-        <ChevronDown size={24} />
-      </motion.button>
     </section>
   );
 }

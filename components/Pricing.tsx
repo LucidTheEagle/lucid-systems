@@ -5,7 +5,7 @@ import { Box, Package, Network, Check, ArrowRight } from "lucide-react";
 import { ShimmerButton } from "./ui/shimmer-button";
 import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
 
-// DECRYPTING PRICE - Flickers through randoms then locks (Oracle's idea)
+// DECRYPTING PRICE
 const DecryptedPrice = ({ value, delay = 0 }: { value: number; delay?: number }) => {
   const [display, setDisplay] = useState("0000");
   const ref = useRef(null);
@@ -24,7 +24,7 @@ const DecryptedPrice = ({ value, delay = 0 }: { value: number; delay?: number })
             return Math.floor(Math.random() * 10).toString();
           }).join("")
         );
-        iterations += 0.2; // Speed of decryption
+        iterations += 0.2;
         if (iterations >= finalValue.length) {
           clearInterval(interval);
           setDisplay(finalValue);
@@ -42,6 +42,7 @@ const DecryptedPrice = ({ value, delay = 0 }: { value: number; delay?: number })
 
 export default function Pricing() {
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
+  const premiumEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
   const tiers = [
     {
@@ -108,15 +109,14 @@ export default function Pricing() {
   return (
     <section id="pricing" className="relative w-full bg-obsidian py-32 md:py-40 overflow-hidden">
       
-      {/* SERVER CORE BACKGROUND - Vertical glowing lines (Oracle's idea) */}
+      {/* SERVER CORE BACKGROUND */}
       <div className="absolute inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-0 left-[20%] w-px h-full bg-gradient-to-b from-transparent via-lucid/50 to-transparent" />
-        <div className="absolute top-0 right-[20%] w-px h-full bg-gradient-to-b from-transparent via-lucid/50 to-transparent" />
+        <div className="absolute top-0 left-[20%] w-px h-full bg-linear-to-b from-transparent via-lucid/50 to-transparent" />
+        <div className="absolute top-0 right-[20%] w-px h-full bg-linear-to-b from-transparent via-lucid/50 to-transparent" />
         <div className="absolute top-0 left-[50%] w-px h-full bg-white/10" />
         
-        {/* Horizontal traces */}
-        <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-lucid/10 to-transparent" />
-        <div className="absolute bottom-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-lucid/10 to-transparent" />
+        <div className="absolute top-1/3 left-0 w-full h-px bg-linear-to-r from-transparent via-lucid/10 to-transparent" />
+        <div className="absolute bottom-1/3 left-0 w-full h-px bg-linear-to-r from-transparent via-lucid/10 to-transparent" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
@@ -126,7 +126,7 @@ export default function Pricing() {
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: premiumEase }}
             viewport={{ once: true }}
             className="text-ancient text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-[0.15em] text-alabaster"
           >
@@ -135,7 +135,7 @@ export default function Pricing() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }}
             viewport={{ once: true }}
             className="flex justify-center"
           >
@@ -156,14 +156,14 @@ export default function Pricing() {
           </motion.div>
         </div>
 
-        {/* THE VAULT - 3 MONUMENT CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+        {/* THE VAULT - 3 MONUMENT CARDS - FIX: Proper z-index and overflow handling */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch relative">
           {tiers.map((tier, idx) => (
             <motion.div
               key={tier.id}
               initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: idx * 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.8, delay: idx * 0.2, ease: premiumEase }}
               viewport={{ once: true }}
               onMouseEnter={() => setHoveredTier(tier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -174,35 +174,55 @@ export default function Pricing() {
                   : "md:min-h-[700px] border border-white/5"
                 }
                 ${hoveredTier === tier.id 
-                  ? "scale-103 shadow-[0_0_60px_rgba(0,240,255,0.3)] z-20" 
+                  ? "md:scale-[1.02] shadow-[0_0_60px_rgba(0,240,255,0.3)] z-30 border-lucid" 
                   : hoveredTier 
-                    ? "opacity-20 blur-[1px] scale-95" 
-                    : "hover:border-lucid/50 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
+                    ? "opacity-30 blur-[1px]" 
+                    : "hover:border-lucid/50 hover:md:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
                 }
               `}
+              style={{
+                // Ensure proper z-index stacking and no parent overflow clipping
+                position: 'relative',
+                zIndex: hoveredTier === tier.id ? 30 : hoveredTier ? 10 : 20
+              }}
             >
-              {/* PHOTON BEAM - Sentry Only */}
+              {/* PHOTON BEAM - Featured Only */}
               {tier.featured && (
                 <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-lucid to-transparent animate-scan-line opacity-75" />
+                  <motion.div 
+                    className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-lucid to-transparent"
+                    animate={{ x: ["-100%", "100%"] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  />
                 </div>
               )}
 
-              {/* CARD HEADER */}
+              {/* CARD HEADER - ICON WITH BREATHING GLOW */}
               <div className="flex items-start justify-between mb-8">
-                <div className={`p-3 bg-obsidian border transition-colors duration-300 
-                  ${tier.featured ? "border-lucid/30 text-lucid" : "border-white/10 text-alabaster group-hover:border-lucid/30 group-hover:text-lucid"}
-                `}>
+                <motion.div 
+                  className={`p-3 bg-obsidian border transition-colors duration-300 
+                    ${tier.featured ? "border-lucid/30 text-lucid" : "border-white/10 text-alabaster group-hover:border-lucid/30 group-hover:text-lucid"}
+                  `}
+                  animate={hoveredTier === tier.id ? {
+                    boxShadow: [
+                      "0 0 10px rgba(0,240,255,0.3)",
+                      "0 0 25px rgba(0,240,255,0.6)",
+                      "0 0 10px rgba(0,240,255,0.3)"
+                    ]
+                  } : {}}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
                   {tier.icon}
-                </div>
+                </motion.div>
+
                 {tier.featured && (
                   <motion.div
                     animate={{ 
                       boxShadow: hoveredTier === tier.id 
-                        ? "0 0 20px rgba(0,240,255,0.4)" 
+                        ? ["0 0 15px rgba(0,240,255,0.3)", "0 0 25px rgba(0,240,255,0.5)", "0 0 15px rgba(0,240,255,0.3)"]
                         : "0 0 10px rgba(0,240,255,0.2)"
                     }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="px-3 py-1.5 border-2 border-lucid text-lucid text-[10px] font-bold uppercase tracking-widest bg-lucid/10"
                   >
                     {tier.subtitle}
@@ -222,7 +242,7 @@ export default function Pricing() {
                 )}
               </div>
 
-              {/* PRICE - DECRYPTING EFFECT (Oracle's idea) */}
+              {/* PRICE - DECRYPTING EFFECT */}
               <div className="mb-8 relative">
                 <div className="absolute inset-0 text-5xl md:text-6xl font-bold text-lucid/5 translate-y-1 translate-x-1">
                   $<DecryptedPrice value={tier.price} delay={idx * 300} />
@@ -243,14 +263,14 @@ export default function Pricing() {
                   <motion.div
                     initial={{ x: "-100%" }}
                     animate={{ x: "100%" }}
-                    transition={{ duration: 1, ease: "easeInOut" }}
-                    className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-lucid/20 to-transparent pointer-events-none"
+                    transition={{ duration: 1.2, ease: "easeInOut" }}
+                    className="absolute top-0 left-0 w-full h-full bg-linear-to-r from-transparent via-lucid/20 to-transparent pointer-events-none"
                   />
                 )}
               </div>
 
               {/* DESCRIPTION */}
-              <p className="text-modern text-sm md:text-base text-granite leading-relaxed mb-8 border-l-2 border-white/5 pl-4 group-hover:border-lucid/50 transition-colors">
+              <p className="text-modern text-sm md:text-base text-granite leading-relaxed mb-8 border-l-2 border-white/5 pl-4 group-hover:border-lucid/50 transition-colors duration-500">
                 {tier.description}
               </p>
 
@@ -263,7 +283,11 @@ export default function Pricing() {
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.6 + (idx * 0.3) + (i * 0.1), duration: 0.3 }}
+                      transition={{ 
+                        delay: 0.6 + (idx * 0.2) + (i * 0.08), 
+                        duration: 0.4,
+                        ease: premiumEase 
+                      }}
                       viewport={{ once: true }}
                       className="flex items-start gap-3 text-sm text-granite group-hover:text-neutral-300 transition-colors"
                     >
@@ -306,7 +330,7 @@ export default function Pricing() {
 
               {/* CONNECTION LINES */}
               {idx < tiers.length - 1 && (
-                <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 w-8 z-30">
+                <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 w-8 z-40">
                   <div className="relative">
                     <div className={`h-px bg-lucid/20 transition-all duration-300 ${
                       hoveredTier === tier.id || hoveredTier === tiers[idx + 1].id 
@@ -325,26 +349,26 @@ export default function Pricing() {
           ))}
         </div>
 
-        {/* VALUE STATEMENT - Keep your unique treatment */}
+        {/* VALUE STATEMENT */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
+          transition={{ duration: 0.8, delay: 1.2, ease: premiumEase }}
           viewport={{ once: true }}
           className="text-center mt-20 relative"
         >
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            transition={{ duration: 1.5, delay: 1.0, ease: "easeOut" }}
+            transition={{ duration: 1.5, delay: 1.0, ease: "easeInOut" }}
             viewport={{ once: true }}
-            className="h-px bg-gradient-to-r from-transparent via-lucid/30 to-transparent mx-auto max-w-md mb-8"
+            className="h-px bg-linear-to-r from-transparent via-lucid/30 to-transparent mx-auto max-w-md mb-8"
           />
           
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.4 }}
+            transition={{ duration: 0.6, delay: 1.4, ease: premiumEase }}
             viewport={{ once: true }}
             className="inline-block mb-4"
           >
@@ -356,7 +380,7 @@ export default function Pricing() {
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 1.6 }}
+            transition={{ duration: 0.8, delay: 1.6, ease: premiumEase }}
             viewport={{ once: true }}
             className="text-modern text-sm md:text-base text-granite max-w-2xl mx-auto leading-relaxed"
           >
@@ -365,26 +389,13 @@ export default function Pricing() {
             <motion.span 
               initial={{ opacity: 0, filter: "blur(4px)" }}
               whileInView={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: 0.8, delay: 1.8 }}
+              transition={{ duration: 0.8, delay: 1.8, ease: premiumEase }}
               viewport={{ once: true }}
               className="text-lucid font-bold tracking-wide inline-block mt-2"
             >
               The fog lifts when systems think.
             </motion.span>
           </motion.p>
-
-          <motion.div
-            animate={{ 
-              opacity: [0.3, 1, 0.3],
-              scale: [1, 1.2, 1]
-            }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="w-1.5 h-1.5 bg-lucid rounded-full mx-auto mt-6 shadow-[0_0_10px_rgba(0,240,255,0.6)]"
-          />
         </motion.div>
       </div>
     </section>
