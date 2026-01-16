@@ -6,7 +6,6 @@ import Problem from "@/components/Problem";
 import Systems from "@/components/Systems";
 import Pricing from "@/components/Pricing";
 import HowItWorks from "@/components/HowItWorks";
-import Proof from "@/components/proof";
 import FinalCTA from "@/components/FinalCTA";
 import Footer from "@/components/Footer";
 
@@ -22,7 +21,6 @@ export default function Home() {
         <Systems /> {/* Systems should be full-width */}
         <Pricing />
         <HowItWorks />
-        <Proof />
         <FinalCTA />
         <Footer />
       </TracingBeam>
