@@ -45,11 +45,13 @@ export const TypewriterEffectSmooth = ({
         className="overflow-hidden pb-2"
         initial={{ width: "0%" }}
         whileInView={{ width: "fit-content" }}
+        viewport={{ once: true, margin: "-100px" }}
         transition={{
           duration: 2,
           ease: "linear",
           delay: 1,
         }}
+        style={{ willChange: 'width' }}
       >
         <div
           className="text-lg md:text-xl font-normal text-modern"
@@ -66,6 +68,7 @@ export const TypewriterEffectSmooth = ({
           repeat: Infinity,
           repeatType: "reverse",
         }}
+        style={{ willChange: 'opacity' }}
         className={cn(
           "block w-[2px] h-5 md:h-6 bg-lucid",
           cursorClassName

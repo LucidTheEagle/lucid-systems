@@ -2,18 +2,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Box, Package, Network, Check, ArrowRight } from "lucide-react";
-import { ShimmerButton } from "./ui/shimmer-button";
 import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
 
-// DECRYPTING PRICE
-const DecryptedPrice = ({ value, delay = 0 }: { value: number; delay?: number }) => {
-  const [display, setDisplay] = useState("0000");
+// PRODUCTION-READY DECRYPTING PRICE
+const DecryptedPrice = ({ value, delay = 0, isMobile = false }: { value: number; delay?: number; isMobile?: boolean }) => {
+  const [display, setDisplay] = useState(value.toString()); // Start with actual value
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
   const finalValue = value.toString();
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView || isMobile) {
+      setDisplay(finalValue);
+      return;
+    }
 
     const timeout = setTimeout(() => {
       let iterations = 0;
@@ -24,24 +26,43 @@ const DecryptedPrice = ({ value, delay = 0 }: { value: number; delay?: number })
             return Math.floor(Math.random() * 10).toString();
           }).join("")
         );
-        iterations += 0.2;
+        iterations += 0.5;
         if (iterations >= finalValue.length) {
           clearInterval(interval);
           setDisplay(finalValue);
         }
-      }, 50);
+      }, 40);
 
       return () => clearInterval(interval);
     }, delay);
 
     return () => clearTimeout(timeout);
-  }, [isInView, finalValue, delay]);
+  }, [isInView, finalValue, delay, isMobile]);
 
-  return <span ref={ref} className="tabular-nums">{display}</span>;
+  return <span ref={ref} className="tabular-nums" style={{ willChange: 'contents' }}>{display}</span>;
 };
 
 export default function Pricing() {
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    
+    let timeoutId: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkMobile, 150);
+    };
+    
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const premiumEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
   const tiers = [
@@ -107,27 +128,37 @@ export default function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="relative w-full bg-obsidian py-32 md:py-40 overflow-hidden">
+    <section 
+      id="pricing" 
+      className="relative w-full bg-obsidian py-32 md:py-40 overflow-hidden"
+      aria-labelledby="pricing-heading"
+    >
       
       {/* SERVER CORE BACKGROUND */}
-      <div className="absolute inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-0 left-[20%] w-px h-full bg-linear-to-b from-transparent via-lucid/50 to-transparent" />
-        <div className="absolute top-0 right-[20%] w-px h-full bg-linear-to-b from-transparent via-lucid/50 to-transparent" />
+      <div className="absolute inset-0 pointer-events-none opacity-20" style={{ transform: 'translateZ(0)' }} aria-hidden="true">
+        <div className="absolute top-0 left-[20%] w-px h-full bg-gradient-to-b from-transparent via-lucid/50 to-transparent" />
+        <div className="absolute top-0 right-[20%] w-px h-full bg-gradient-to-b from-transparent via-lucid/50 to-transparent" />
         <div className="absolute top-0 left-[50%] w-px h-full bg-white/10" />
         
-        <div className="absolute top-1/3 left-0 w-full h-px bg-linear-to-r from-transparent via-lucid/10 to-transparent" />
-        <div className="absolute bottom-1/3 left-0 w-full h-px bg-linear-to-r from-transparent via-lucid/10 to-transparent" />
+        <div className="absolute top-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-lucid/10 to-transparent" />
+        <div className="absolute bottom-1/3 left-0 w-full h-px bg-gradient-to-r from-transparent via-lucid/10 to-transparent" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         
-        {/* SECTION HEADER */}
-        <div className="text-center mb-32 space-y-6">
+        {/* SECTION HEADER - Delayed to wait for Systems */}
+        <header className="text-center mb-32 space-y-6">
           <motion.h2 
+            id="pricing-heading"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: premiumEase }}
-            viewport={{ once: true }}
+            transition={{ 
+              duration: 0.8, 
+              delay: isMobile ? 0.3 : 0.5,
+              ease: premiumEase 
+            }}
+            viewport={{ once: true, margin: "-150px", amount: 0.3 }}
+            style={{ willChange: 'opacity, transform' }}
             className="text-ancient text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-[0.15em] text-alabaster"
           >
             Deployment Protocols.
@@ -135,8 +166,13 @@ export default function Pricing() {
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: premiumEase }}
-            viewport={{ once: true }}
+            transition={{ 
+              duration: 0.8, 
+              delay: isMobile ? 0.5 : 0.7, 
+              ease: premiumEase 
+            }}
+            viewport={{ once: true, margin: "-150px", amount: 0.3 }}
+            style={{ willChange: 'opacity' }}
             className="flex justify-center"
           >
             <TypewriterEffectSmooth
@@ -154,56 +190,58 @@ export default function Pricing() {
               cursorClassName="bg-lucid"
             />
           </motion.div>
-        </div>
+        </header>
 
-        {/* THE VAULT - 3 MONUMENT CARDS - FIX: Proper z-index and overflow handling */}
+        {/* THE VAULT - 3 MONUMENT CARDS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch relative">
           {tiers.map((tier, idx) => (
-            <motion.div
+            <motion.article
               key={tier.id}
-              initial={{ opacity: 0, y: 60 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: idx * 0.2, ease: premiumEase }}
-              viewport={{ once: true }}
-              onMouseEnter={() => setHoveredTier(tier.id)}
-              onMouseLeave={() => setHoveredTier(null)}
+              transition={{ 
+                duration: 0.6, 
+                delay: (isMobile ? 0.8 : 1.0) + (idx * 0.1), 
+                ease: premiumEase 
+              }}
+              viewport={{ once: true, margin: "-100px", amount: 0.2 }}
+              style={{ willChange: 'opacity, transform' }}
+              onMouseEnter={() => !isMobile && setHoveredTier(tier.id)}
+              onMouseLeave={() => !isMobile && setHoveredTier(null)}
               className={`
                 group relative flex flex-col h-full bg-basalt p-8 md:p-10 transition-all duration-500
                 ${tier.featured 
                   ? "md:min-h-[750px] md:-mt-8 md:pb-12 border-2 border-lucid/40 shadow-[0_0_40px_rgba(0,240,255,0.15)]" 
                   : "md:min-h-[700px] border border-white/5"
                 }
-                ${hoveredTier === tier.id 
+                ${!isMobile && hoveredTier === tier.id 
                   ? "md:scale-[1.02] shadow-[0_0_60px_rgba(0,240,255,0.3)] z-30 border-lucid" 
-                  : hoveredTier 
-                    ? "opacity-30 blur-[1px]" 
-                    : "hover:border-lucid/50 hover:md:-translate-y-2 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
+                  : !isMobile && hoveredTier && hoveredTier !== tier.id
+                    ? "md:opacity-50 md:blur-[0.5px]" 
+                    : "hover:border-lucid/50 hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
                 }
               `}
-              style={{
-                // Ensure proper z-index stacking and no parent overflow clipping
-                position: 'relative',
-                zIndex: hoveredTier === tier.id ? 30 : hoveredTier ? 10 : 20
-              }}
+              aria-labelledby={`tier-${tier.id}-name`}
             >
-              {/* PHOTON BEAM - Featured Only */}
-              {tier.featured && (
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {/* PHOTON BEAM */}
+              {tier.featured && !isMobile && (
+                <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
                   <motion.div 
-                    className="absolute top-0 left-0 w-full h-[2px] bg-linear-to-r from-transparent via-lucid to-transparent"
+                    className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-lucid to-transparent"
                     animate={{ x: ["-100%", "100%"] }}
                     transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    style={{ willChange: 'transform' }}
                   />
                 </div>
               )}
 
-              {/* CARD HEADER - ICON WITH BREATHING GLOW */}
+              {/* CARD HEADER */}
               <div className="flex items-start justify-between mb-8">
                 <motion.div 
                   className={`p-3 bg-obsidian border transition-colors duration-300 
                     ${tier.featured ? "border-lucid/30 text-lucid" : "border-white/10 text-alabaster group-hover:border-lucid/30 group-hover:text-lucid"}
                   `}
-                  animate={hoveredTier === tier.id ? {
+                  animate={!isMobile && hoveredTier === tier.id ? {
                     boxShadow: [
                       "0 0 10px rgba(0,240,255,0.3)",
                       "0 0 25px rgba(0,240,255,0.6)",
@@ -211,18 +249,21 @@ export default function Pricing() {
                     ]
                   } : {}}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  style={{ willChange: !isMobile && hoveredTier === tier.id ? 'box-shadow' : 'auto' }}
+                  aria-hidden="true"
                 >
                   {tier.icon}
                 </motion.div>
 
                 {tier.featured && (
                   <motion.div
-                    animate={{ 
+                    animate={!isMobile ? { 
                       boxShadow: hoveredTier === tier.id 
                         ? ["0 0 15px rgba(0,240,255,0.3)", "0 0 25px rgba(0,240,255,0.5)", "0 0 15px rgba(0,240,255,0.3)"]
                         : "0 0 10px rgba(0,240,255,0.2)"
-                    }}
+                    } : {}}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    style={{ willChange: !isMobile ? 'box-shadow' : 'auto' }}
                     className="px-3 py-1.5 border-2 border-lucid text-lucid text-[10px] font-bold uppercase tracking-widest bg-lucid/10"
                   >
                     {tier.subtitle}
@@ -232,7 +273,10 @@ export default function Pricing() {
 
               {/* TIER NAME */}
               <div className="mb-6">
-                <h3 className="text-ancient text-xl md:text-2xl font-bold text-alabaster mb-2 tracking-widest uppercase group-hover:text-white transition-colors">
+                <h3 
+                  id={`tier-${tier.id}-name`}
+                  className="text-ancient text-xl md:text-2xl font-bold text-alabaster mb-2 tracking-widest uppercase group-hover:text-white transition-colors"
+                >
                   {tier.name}
                 </h3>
                 {!tier.featured && (
@@ -242,29 +286,31 @@ export default function Pricing() {
                 )}
               </div>
 
-              {/* PRICE - DECRYPTING EFFECT */}
+              {/* PRICE */}
               <div className="mb-8 relative">
-                <div className="absolute inset-0 text-5xl md:text-6xl font-bold text-lucid/5 translate-y-1 translate-x-1">
-                  $<DecryptedPrice value={tier.price} delay={idx * 300} />
+                <div className="absolute inset-0 text-5xl md:text-6xl font-bold text-lucid/5 translate-y-1 translate-x-1" aria-hidden="true">
+                  $<DecryptedPrice value={tier.price} delay={idx * 200} isMobile={isMobile} />
                 </div>
                 <div className="relative">
                   <div className={`text-5xl md:text-6xl font-bold tracking-tighter transition-colors ${
                     tier.featured ? "text-lucid" : "text-alabaster group-hover:text-lucid"
                   }`}>
-                    $<DecryptedPrice value={tier.price} delay={idx * 300} />
+                    $<DecryptedPrice value={tier.price} delay={idx * 200} isMobile={isMobile} />
                   </div>
                   <p className="text-modern text-[10px] text-granite uppercase tracking-widest mt-2">
                     Operational Leverage
                   </p>
                 </div>
                 
-                {/* Price scan line on hover */}
-                {hoveredTier === tier.id && (
+                {/* Price scan line */}
+                {!isMobile && hoveredTier === tier.id && (
                   <motion.div
                     initial={{ x: "-100%" }}
                     animate={{ x: "100%" }}
                     transition={{ duration: 1.2, ease: "easeInOut" }}
-                    className="absolute top-0 left-0 w-full h-full bg-linear-to-r from-transparent via-lucid/20 to-transparent pointer-events-none"
+                    style={{ willChange: 'transform' }}
+                    className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-lucid/20 to-transparent pointer-events-none"
+                    aria-hidden="true"
                   />
                 )}
               </div>
@@ -276,33 +322,55 @@ export default function Pricing() {
 
               {/* CAPABILITIES */}
               <div className="mb-8 grow">
-                <p className="text-modern text-alabaster text-xs uppercase tracking-widest mb-4 opacity-60">Capabilities:</p>
-                <ul className="space-y-3">
-                  {tier.features.map((feature, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, x: -10 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ 
-                        delay: 0.6 + (idx * 0.2) + (i * 0.08), 
-                        duration: 0.4,
-                        ease: premiumEase 
-                      }}
-                      viewport={{ once: true }}
-                      className="flex items-start gap-3 text-sm text-granite group-hover:text-neutral-300 transition-colors"
-                    >
-                      <Check 
-                        className={`w-4 h-4 mt-0.5 shrink-0 transition-all ${
-                          hoveredTier === tier.id 
-                            ? "text-lucid scale-110" 
-                            : "text-lucid/70"
-                        }`}
-                        strokeWidth={2} 
-                      />
-                      <span className="text-modern leading-relaxed">{feature}</span>
-                    </motion.li>
-                  ))}
-                </ul>
+                <p className="text-modern text-alabaster text-xs uppercase tracking-widest mb-4 opacity-60">
+                  Capabilities:
+                </p>
+                
+                {isMobile ? (
+                  <motion.ul 
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.6, delay: idx * 0.15 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    className="space-y-3"
+                  >
+                    {tier.features.map((feature, i) => (
+                      <li 
+                        key={i}
+                        className="flex items-start gap-3 text-sm text-granite group-hover:text-neutral-300 transition-colors"
+                      >
+                        <Check className="w-4 h-4 mt-0.5 shrink-0 text-lucid/70" strokeWidth={2} />
+                        <span className="text-modern leading-relaxed">{feature}</span>
+                      </li>
+                    ))}
+                  </motion.ul>
+                ) : (
+                  <ul className="space-y-3">
+                    {tier.features.map((feature, i) => (
+                      <motion.li 
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ 
+                          delay: 0.6 + (idx * 0.2) + (i * 0.08), 
+                          duration: 0.4,
+                          ease: premiumEase 
+                        }}
+                        viewport={{ once: true, margin: "-50px" }}
+                        style={{ willChange: 'opacity, transform' }}
+                        className="flex items-start gap-3 text-sm text-granite group-hover:text-neutral-300 transition-colors"
+                      >
+                        <Check 
+                          className={`w-4 h-4 mt-0.5 shrink-0 transition-all ${
+                            hoveredTier === tier.id ? "text-lucid scale-110" : "text-lucid/70"
+                          }`}
+                          strokeWidth={2} 
+                        />
+                        <span className="text-modern leading-relaxed">{feature}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               {/* WHO IT'S FOR */}
@@ -310,18 +378,24 @@ export default function Pricing() {
                 {tier.whoItsFor}
               </p>
 
-              {/* CTA AREA */}
+              {/* CTA AREA - UNIQUE HOVER STRATEGY */}
               <div className="mt-auto space-y-4">
-                <ShimmerButton 
+                {/* Primary CTA - Solid button with glow on hover */}
+                <button
                   onClick={() => window.open("https://cal.com/lucid-theeagle-ebabkz/system-strategy-call", "_blank")}
-                  className="w-full py-4 text-xs font-bold tracking-widest uppercase"
+                  className="group/cta relative w-full py-4 bg-lucid text-obsidian border-2 border-lucid font-bold text-xs tracking-widest uppercase overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_rgba(0,240,255,0.5)] touch-manipulation"
+                  aria-label={`Schedule consultation for ${tier.name}`}
                 >
-                  [ {tier.cta} ]
-                </ShimmerButton>
+                  <span className="relative z-10">[ {tier.cta} ]</span>
+                  
+                  {/* Animated background on hover */}
+                  <div className="absolute inset-0 bg-white opacity-0 group-hover/cta:opacity-100 transition-opacity duration-300" />
+                </button>
                 
                 <button 
                   onClick={() => window.open("https://cal.com/lucid-theeagle-ebabkz/system-strategy-call", "_blank")}
-                  className="w-full flex items-center justify-center gap-2 text-xs text-granite hover:text-lucid transition-colors uppercase tracking-widest group/link"
+                  className="w-full flex items-center justify-center gap-2 text-xs text-granite hover:text-lucid transition-colors uppercase tracking-widest group/link touch-manipulation"
+                  aria-label={`${tier.secondaryCta} for ${tier.name}`}
                 >
                   {tier.secondaryCta}
                   <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
@@ -329,7 +403,7 @@ export default function Pricing() {
               </div>
 
               {/* CONNECTION LINES */}
-              {idx < tiers.length - 1 && (
+              {!isMobile && idx < tiers.length - 1 && (
                 <div className="hidden md:block absolute -right-4 top-1/2 -translate-y-1/2 w-8 z-40">
                   <div className="relative">
                     <div className={`h-px bg-lucid/20 transition-all duration-300 ${
@@ -345,7 +419,7 @@ export default function Pricing() {
                   </div>
                 </div>
               )}
-            </motion.div>
+            </motion.article>
           ))}
         </div>
 
@@ -354,22 +428,27 @@ export default function Pricing() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2, ease: premiumEase }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "-100px" }}
+          style={{ willChange: 'opacity, transform' }}
           className="text-center mt-20 relative"
         >
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             transition={{ duration: 1.5, delay: 1.0, ease: "easeInOut" }}
-            viewport={{ once: true }}
-            className="h-px bg-linear-to-r from-transparent via-lucid/30 to-transparent mx-auto max-w-md mb-8"
+            viewport={{ once: true, margin: "-100px" }}
+            style={{ willChange: 'transform' }}
+            className="h-px bg-gradient-to-r from-transparent via-lucid/30 to-transparent mx-auto max-w-md mb-8"
+            role="separator"
+            aria-hidden="true"
           />
           
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 1.4, ease: premiumEase }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
+            style={{ willChange: 'opacity, transform' }}
             className="inline-block mb-4"
           >
             <p className="text-modern text-lucid/60 text-xs uppercase tracking-[0.3em]">
@@ -381,7 +460,8 @@ export default function Pricing() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 1.6, ease: premiumEase }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
+            style={{ willChange: 'opacity' }}
             className="text-modern text-sm md:text-base text-granite max-w-2xl mx-auto leading-relaxed"
           >
             Each deployment includes full system customization, integration support, and ongoing optimization.
@@ -391,6 +471,7 @@ export default function Pricing() {
               whileInView={{ opacity: 1, filter: "blur(0px)" }}
               transition={{ duration: 0.8, delay: 1.8, ease: premiumEase }}
               viewport={{ once: true }}
+              style={{ willChange: 'opacity, filter' }}
               className="text-lucid font-bold tracking-wide inline-block mt-2"
             >
               The fog lifts when systems think.

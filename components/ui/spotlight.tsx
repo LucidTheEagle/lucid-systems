@@ -34,7 +34,7 @@ export const Spotlight = ({
       transition={{ duration: 1.5 }}
       className="pointer-events-none absolute inset-0 h-full w-full"
     >
-      {/* Left Spotlight */}
+      {/* Left Spotlight - Optimized with will-change */}
       <motion.div
         animate={{ x: [0, xOffset, 0] }}
         transition={{
@@ -43,38 +43,42 @@ export const Spotlight = ({
           repeatType: "reverse",
           ease: "easeInOut",
         }}
+        style={{ willChange: 'transform' }}
         className="absolute top-0 left-0 w-screen h-screen z-40 pointer-events-none"
       >
         <div
           style={{
-            transform: `translateY(${translateY}px) rotate(-45deg)`,
+            transform: `translateY(${translateY}px) rotate(-45deg) translateZ(0)`,
             background: gradientFirst,
             width: `${width}px`,
             height: `${height}px`,
+            willChange: 'transform',
           }}
           className="absolute top-0 left-0"
         />
         <div
           style={{
-            transform: "rotate(-45deg) translate(5%, -50%)",
+            transform: "rotate(-45deg) translate(5%, -50%) translateZ(0)",
             background: gradientSecond,
             width: `${smallWidth}px`,
             height: `${height}px`,
+            willChange: 'transform',
           }}
           className="absolute top-0 left-0 origin-top-left"
         />
         <div
           style={{
-            transform: "rotate(-45deg) translate(-180%, -70%)",
+            transform: "rotate(-45deg) translate(-180%, -70%) translateZ(0)",
             background: gradientThird,
             width: `${smallWidth}px`,
             height: `${height}px`,
+            willChange: 'transform',
           }}
           className="absolute top-0 left-0 origin-top-left"
         />
       </motion.div>
 
-      {/* Right Spotlight */}
+      {/* Right Spotlight - Optimized with will-change */}
       <motion.div
         animate={{ x: [0, -xOffset, 0] }}
         transition={{
@@ -83,32 +87,36 @@ export const Spotlight = ({
           repeatType: "reverse",
           ease: "easeInOut",
         }}
+        style={{ willChange: 'transform' }}
         className="absolute top-0 right-0 w-screen h-screen z-40 pointer-events-none"
       >
         <div
           style={{
-            transform: `translateY(${translateY}px) rotate(45deg)`,
+            transform: `translateY(${translateY}px) rotate(45deg) translateZ(0)`,
             background: gradientFirst,
             width: `${width}px`,
             height: `${height}px`,
+            willChange: 'transform',
           }}
           className="absolute top-0 right-0"
         />
         <div
           style={{
-            transform: "rotate(45deg) translate(-5%, -50%)",
+            transform: "rotate(45deg) translate(-5%, -50%) translateZ(0)",
             background: gradientSecond,
             width: `${smallWidth}px`,
             height: `${height}px`,
+            willChange: 'transform',
           }}
           className="absolute top-0 right-0 origin-top-right"
         />
         <div
           style={{
-            transform: "rotate(45deg) translate(180%, -70%)",
+            transform: "rotate(45deg) translate(180%, -70%) translateZ(0)",
             background: gradientThird,
             width: `${smallWidth}px`,
             height: `${height}px`,
+            willChange: 'transform',
           }}
           className="absolute top-0 right-0 origin-top-right"
         />

@@ -16,18 +16,34 @@ export const TextGenerateEffect = ({
 }) => {
   const [scope, animate] = useAnimate();
   const wordsArray = words.split(" ");
+  
   useEffect(() => {
-    animate(
-      "span",
-      {
-        opacity: 1,
-        filter: filter ? "blur(0px)" : "none",
-      },
-      {
-        duration: duration ? duration : 1,
-        delay: stagger(0.2),
-      }
-    );
+    // Only animate if filter is enabled (desktop)
+    if (filter) {
+      animate(
+        "span",
+        {
+          opacity: 1,
+          filter: "blur(0px)",
+        },
+        {
+          duration: duration,
+          delay: stagger(0.2),
+        }
+      );
+    } else {
+      // Mobile: instant display, no animation
+      animate(
+        "span",
+        {
+          opacity: 1,
+        },
+        {
+          duration: 0.3,
+          delay: stagger(0.05),
+        }
+      );
+    }
   }, [animate, duration, filter]);
 
   const renderWords = () => {
@@ -40,6 +56,7 @@ export const TextGenerateEffect = ({
               className="dark:text-white text-black opacity-0"
               style={{
                 filter: filter ? "blur(10px)" : "none",
+                willChange: filter ? 'opacity, filter' : 'opacity',
               }}
             >
               {word}{" "}
@@ -53,7 +70,7 @@ export const TextGenerateEffect = ({
   return (
     <div className={cn("font-bold", className)}>
       <div className="mt-4">
-        <div className=" dark:text-white leading-snug">
+        <div className="dark:text-white leading-snug">
           {renderWords()}
         </div>
       </div>

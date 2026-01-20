@@ -1,20 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FileText } from "lucide-react";
+import { FileText, Cpu } from "lucide-react";
 
 export default function PrismSimulation() {
   const [isScanning, setIsScanning] = useState(false);
   const [jsonText, setJsonText] = useState("");
   const [isComplete, setIsComplete] = useState(false);
 
-  const fullJSON = `{
-  "candidate": "Sarah Chen",
-  "role": "Senior Engineer",
-  "experience": 8,
-  "stack": ["Python", "PyTorch", "React"],
-  "score": 0.94
-}`;
+  const fullJSON = `{\n  "candidate": "Sarah Chen",\n  "role": "Senior Engineer",\n  "experience": 8,\n  "stack": ["Python", "PyTorch"],\n  "score": 0.94\n}`;
 
   useEffect(() => {
     const startTimer = setTimeout(() => {
@@ -32,7 +26,7 @@ export default function PrismSimulation() {
             setIsScanning(false);
           }, 500);
         }
-      }, 30);
+      }, 20);
 
       return () => clearInterval(typeInterval);
     }, 1000);
@@ -41,84 +35,90 @@ export default function PrismSimulation() {
   }, [fullJSON]);
 
   return (
-    <div className="w-full h-full flex relative font-mono">
+    <div className="w-full h-full flex relative font-mono text-[10px] md:text-xs">
       
       <div className="flex h-full w-full">
-        {/* LEFT: UNSTRUCTURED (BLURRED CHAOS) */}
-        <div className={`w-1/2 h-full p-4 md:p-6 bg-obsidian/50 text-granite overflow-hidden relative transition-all duration-1000 ${isComplete ? 'opacity-20 blur-sm' : 'opacity-100'}`}>
-          <div className="text-[9px] text-red-400/70 tracking-widest mb-4 uppercase flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-red-400 animate-pulse" />
-            UNSTRUCTURED INPUT
+        {/* LEFT: UNSTRUCTURED (CHAOS) */}
+        <div 
+          className={`w-1/2 h-full p-4 md:p-6 bg-obsidian/80 text-granite overflow-hidden relative transition-all duration-1000 ${
+            isComplete ? 'opacity-10 grayscale' : 'opacity-100'
+          }`}
+          style={{ willChange: isComplete ? 'auto' : 'opacity, filter' }}
+        >
+          <div className="text-red-400/70 tracking-widest mb-4 uppercase flex items-center gap-2">
+            <span 
+              className="w-1.5 h-1.5 bg-red-400 animate-pulse rounded-full"
+              aria-label="Processing indicator"
+            />
+            RAW_INPUT
           </div>
-          <div className={`space-y-3 text-[10px] md:text-sm ${isScanning ? 'animate-pulse' : ''}`}>
-            <p>RESUME: Sarah Chen</p>
-            <p>EXP: 8 years Python dev...</p>
-            <p>Seeking senior role in AI...</p>
-            <div className="w-full h-2 bg-white/10" />
-            <p>Skills: PyTorch, React, Node...</p>
-            <div className="w-3/4 h-2 bg-white/10" />
-            <p>Education: MIT, CS Degree...</p>
-            <div className="w-2/3 h-2 bg-white/10 mt-2" />
-            <p className="text-[9px] opacity-50">Contact: sarah@email.com</p>
+          <div className={`space-y-4 transition-opacity duration-500 ${isScanning ? 'opacity-50' : ''}`}>
+            <p className="text-[10px] md:text-xs">RESUME: Sarah Chen</p>
+            <p className="opacity-70 text-[9px] md:text-[11px]">Senior developer with 8 years exp in Python...</p>
+            <div className="w-full h-px bg-white/5 my-2" />
+            <p className="text-[10px] md:text-xs">Looking for roles in AI architecture.</p>
+            <p className="opacity-60 text-[9px] md:text-[11px]">Skills: PyTorch, React, Node, AWS...</p>
+            <div className="w-3/4 h-2 bg-white/5" />
+            <div className="w-1/2 h-2 bg-white/5" />
           </div>
         </div>
 
-        {/* RIGHT: STRUCTURED (CRYSTAL CLARITY) */}
+        {/* RIGHT: STRUCTURED (CLARITY) */}
         <div className="w-1/2 h-full p-4 md:p-6 bg-basalt text-lucid overflow-hidden relative border-l border-white/10">
-          <div className="text-[9px] text-emerald-400/70 tracking-widest mb-4 uppercase flex items-center gap-2">
+          <div className="text-emerald-400/70 tracking-widest mb-4 uppercase flex items-center gap-2">
             <motion.span 
-              className="w-1.5 h-1.5 bg-emerald-400"
+              className="w-1.5 h-1.5 bg-emerald-400 rounded-full"
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1, repeat: Infinity }}
+              style={{ willChange: 'opacity' }}
+              aria-label="Active processing"
             />
-            STRUCTURED OUTPUT
+            PRISM_OUTPUT
           </div>
-          <pre className="text-[10px] md:text-sm leading-relaxed whitespace-pre-wrap">
-            {jsonText.split('\n').map((line, i) => {
-              const isScore = line.includes('"score"');
-              return (
-                <motion.span 
-                  key={i} 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.1 }}
-                  className={isScore ? 'text-amber-400 font-bold' : ''}
-                >
-                  {line}{'\n'}
-                </motion.span>
-              );
-            })}
+          <pre className="leading-relaxed whitespace-pre-wrap font-mono text-[10px] md:text-xs">
+            {jsonText}
+            {isScanning && (
+              <span 
+                className="animate-pulse bg-lucid w-2 h-4 inline-block align-middle ml-1"
+                style={{ willChange: 'opacity' }}
+              />
+            )}
           </pre>
         </div>
 
-        {/* SCANNER LINE (ORACLE'S UPGRADE) */}
+        {/* SCANNER LINE - GPU accelerated */}
         {isScanning && !isComplete && (
           <motion.div 
-            className="absolute top-0 bottom-0 w-[2px] bg-lucid z-30"
-            style={{ boxShadow: "0 0 20px rgba(0,240,255,0.8)" }}
+            className="absolute top-0 bottom-0 w-[1px] bg-lucid z-30"
+            style={{ 
+              boxShadow: "0 0 15px rgba(0,240,255,0.5)",
+              left: "0%",
+              willChange: 'left'
+            }}
             animate={{ left: ["0%", "50%", "0%"] }}
-            transition={{ duration: 6, ease: "linear", repeat: Infinity }}
+            transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
+            aria-hidden="true"
           >
-            {/* TRAILING LIGHT */}
-            <div className="absolute top-1/2 -right-[500px] w-[500px] h-px bg-gradient-to-l from-lucid/30 to-transparent" />
+            <div className="absolute top-1/2 -right-[100px] w-[200px] h-[100px] bg-lucid/10 blur-xl rounded-full" />
           </motion.div>
         )}
 
-        {/* CENTER ICON (FRACTURE POINT) */}
+        {/* FRACTURE POINT ICON */}
         <motion.div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-obsidian border border-lucid p-2"
-          animate={isScanning ? {
-            boxShadow: [
-              "0 0 15px rgba(0,240,255,0.3)",
-              "0 0 30px rgba(0,240,255,0.6)",
-              "0 0 15px rgba(0,240,255,0.3)"
-            ]
-          } : {
-            boxShadow: "0 0 10px rgba(0,240,255,0.2)"
-          }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-40 bg-obsidian border border-lucid/50 p-2 rounded-full"
+          animate={isScanning ? { 
+            scale: [1, 1.1, 1], 
+            borderColor: ["rgba(0,240,255,0.5)", "rgba(0,240,255,1)", "rgba(0,240,255,0.5)"] 
+          } : {}}
+          transition={{ duration: 1, repeat: Infinity }}
+          style={{ willChange: isScanning ? 'transform, border-color' : 'auto' }}
+          aria-hidden="true"
         >
-          <FileText className={`w-4 h-4 text-lucid ${isScanning ? 'animate-spin' : ''}`} />
+          {isScanning ? (
+            <Cpu className="w-5 h-5 text-lucid" style={{ animation: 'spin 3s linear infinite' }} />
+          ) : (
+            <FileText className="w-5 h-5 text-lucid" />
+          )}
         </motion.div>
       </div>
     </div>
