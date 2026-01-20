@@ -206,7 +206,7 @@ Three legal pages are included:
 
 ## 📞 Contact
 
-- **Email**: lucid@lucidsystems.vercel.app
+- **Email**: lucidtheeagle@gmail.com
 - **Booking**: [Cal.com Strategy Call](https://cal.com/lucid-theeagle-ebabkz/system-strategy-call)
 
 ---
