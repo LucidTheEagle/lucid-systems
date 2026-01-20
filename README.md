@@ -206,14 +206,14 @@ Three legal pages are included:
 
 ## 📞 Contact
 
-- **Email**: lucid@lucidsystems.io
+- **Email**: lucid@lucidsystems.vercel.app
 - **Booking**: [Cal.com Strategy Call](https://cal.com/lucid-theeagle-ebabkz/system-strategy-call)
 
 ---
 
 ## 📄 License
 
-All rights reserved © 2025 Lucid Systems.
+All rights reserved © 2026 Lucid Systems.
 
 Built by Lucid the Eagle.
 
